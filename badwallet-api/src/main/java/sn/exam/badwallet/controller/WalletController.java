@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sn.exam.badwallet.dto.BalanceResponse;
 import sn.exam.badwallet.dto.CreateWalletRequest;
 import sn.exam.badwallet.dto.WalletResponse;
 import sn.exam.badwallet.service.WalletService;
@@ -33,5 +34,15 @@ public class WalletController {
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return ResponseEntity.ok(walletService.getAllWallets(pageable));
+    }
+
+    @GetMapping("/{phoneNumber}")
+    public ResponseEntity<WalletResponse> getWallet(@PathVariable String phoneNumber) {
+        return ResponseEntity.ok(walletService.getWalletByPhoneNumber(phoneNumber));
+    }
+
+    @GetMapping("/{phoneNumber}/balance")
+    public ResponseEntity<BalanceResponse> getBalance(@PathVariable String phoneNumber) {
+        return ResponseEntity.ok(walletService.getBalance(phoneNumber));
     }
 }

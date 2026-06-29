@@ -4,10 +4,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sn.exam.badwallet.dto.BalanceResponse;
 import sn.exam.badwallet.dto.CreateWalletRequest;
 import sn.exam.badwallet.dto.WalletResponse;
 import sn.exam.badwallet.entity.Wallet;
 import sn.exam.badwallet.exception.WalletAlreadyExistsException;
+import sn.exam.badwallet.exception.WalletNotFoundException;
 import sn.exam.badwallet.mapper.WalletMapper;
 import sn.exam.badwallet.repository.WalletRepository;
 
@@ -45,5 +47,21 @@ public class WalletService {
     @Transactional(readOnly = true)
     public Page<WalletResponse> getAllWallets(Pageable pageable) {
         return walletRepository.findAll(pageable).map(walletMapper::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public WalletResponse getWalletByPhoneNumber(String phoneNumber) {
+        return walletMapper.toResponse(findOrThrow(phoneNumber));
+    }
+
+    @Transactional(readOnly = true)
+    public BalanceResponse getBalance(String phoneNumber) {
+        Wallet wallet = findOrThrow(phoneNumber);
+        return new BalanceResponse(wallet.getBalance(), wallet.getCurrency());
+    }
+
+    private Wallet findOrThrow(String phoneNumber) {
+        return walletRepository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new WalletNotFoundException(phoneNumber));
     }
 }
