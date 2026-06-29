@@ -17,7 +17,7 @@ public class DepositStrategyFactory {
     public DepositStrategy resolve(DepositMethod method) {
         DepositStrategy strategy = strategies.get(method);
         if (strategy == null) {
-            throw new IllegalArgumentException("No strategy found for deposit method: " + method);
+            throw new IllegalArgumentException("No deposit strategy for: " + method);
         }
         return strategy;
     }
