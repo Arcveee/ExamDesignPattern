@@ -38,7 +38,7 @@ public class DepositService extends AbstractTransactionProcessor {
     public TransactionResponse deposit(Long walletId, DepositRequest request) {
         Wallet wallet = walletRepository.findById(walletId)
                 .orElseThrow(() -> new WalletNotFoundException(String.valueOf(walletId)));
-        currentStrategy = strategyFactory.resolve(request.method());
+        currentStrategy = strategyFactory.resolve(request.paymentMethod());
         return process(wallet, request.amount());
     }
 

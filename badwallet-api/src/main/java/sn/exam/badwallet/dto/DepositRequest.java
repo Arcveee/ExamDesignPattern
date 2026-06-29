@@ -8,5 +8,5 @@ import java.math.BigDecimal;
 
 public record DepositRequest(
         @NotNull @DecimalMin("1.00") BigDecimal amount,
-        @NotNull DepositMethod method
+        @NotNull DepositMethod paymentMethod
 ) {}
