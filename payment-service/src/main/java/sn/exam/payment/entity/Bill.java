@@ -2,6 +2,7 @@ package sn.exam.payment.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "bills")
@@ -26,6 +27,9 @@ public class Bill {
     @Column(nullable = false)
     private boolean paid;
 
+    @Column(nullable = false)
+    private LocalDate billDate;
+
     protected Bill() {}
 
     public Long getId() { return id; }
@@ -34,5 +38,6 @@ public class Bill {
     public String getSubscriberName() { return subscriberName; }
     public BigDecimal getAmount() { return amount; }
     public boolean isPaid() { return paid; }
+    public LocalDate getBillDate() { return billDate; }
     public void setPaid(boolean paid) { this.paid = paid; }
 }
