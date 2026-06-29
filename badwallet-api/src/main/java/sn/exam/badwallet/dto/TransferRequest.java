@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public record TransferRequest(
-        @NotBlank String targetPhoneNumber,
+        @NotBlank String senderPhone,
+        @NotBlank String receiverPhone,
         @NotNull @DecimalMin("1.00") BigDecimal amount
 ) {}
