@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public record WalletResponse(
         Long id,
         String phoneNumber,
-        String email,
+        String ownerName,
         BigDecimal balance,
         String currency,
         LocalDateTime createdAt

@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 public class DepositService extends AbstractTransactionProcessor {
 
     private final DepositStrategyFactory strategyFactory;
-    private DepositStrategy currentStrategy;
+    private final ThreadLocal<DepositStrategy> currentStrategy = new ThreadLocal<>();
 
     public DepositService(WalletRepository walletRepository,
                           TransactionRepository transactionRepository,
@@ -36,10 +36,17 @@ public class DepositService extends AbstractTransactionProcessor {
 
     @Transactional
     public TransactionResponse deposit(Long walletId, DepositRequest request) {
+        if (walletId == null) {
+            throw new IllegalArgumentException("walletId must not be null");
+        }
         Wallet wallet = walletRepository.findById(walletId)
                 .orElseThrow(() -> new WalletNotFoundException(String.valueOf(walletId)));
-        currentStrategy = strategyFactory.resolve(request.paymentMethod());
-        return process(wallet, request.amount());
+        currentStrategy.set(strategyFactory.resolve(request.paymentMethod()));
+        try {
+            return process(wallet, request.amount());
+        } finally {
+            currentStrategy.remove();
+        }
     }
 
     @Override
@@ -51,7 +58,7 @@ public class DepositService extends AbstractTransactionProcessor {
 
     @Override
     protected Transaction execute(Wallet wallet, BigDecimal amount) {
-        BigDecimal credited = currentStrategy.process(wallet, amount);
+        BigDecimal credited = currentStrategy.get().process(wallet, amount);
         BigDecimal fee = amount.subtract(credited);
         wallet.setBalance(wallet.getBalance().add(credited));
         return Transaction.builder()

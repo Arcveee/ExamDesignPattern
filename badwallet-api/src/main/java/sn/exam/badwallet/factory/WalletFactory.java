@@ -13,17 +13,21 @@ import java.util.UUID;
 public class WalletFactory {
 
     private static final List<String> PREFIXES = List.of("70", "75", "76", "77", "78");
-    private static final List<String> DOMAINS = List.of("gmail.com", "orange.sn", "free.sn", "hotmail.com");
+    private static final List<String> FIRST_NAMES = List.of("Amadou", "Fatou", "Mamadou", "Awa", "Ousmane", "Aminata", "Cheikh", "Mariama", "Ibrahima", "Ndeye", "Modou", "Khady", "Abdoulaye", "Aïssatou", "Moussa");
     private static final Random RANDOM = new Random();
 
     public Wallet createRandom() {
         return Wallet.builder()
                 .phoneNumber(randomPhone())
-                .email(randomEmail())
+                .ownerName(randomSenegaleseName())
                 .code(randomCode())
                 .balance(randomBalance())
                 .currency("XOF")
                 .build();
+    }
+
+    private String randomSenegaleseName() {
+        return FIRST_NAMES.get(RANDOM.nextInt(FIRST_NAMES.size()));
     }
 
     private String randomPhone() {
@@ -32,11 +36,7 @@ public class WalletFactory {
         return "+221" + prefix + suffix;
     }
 
-    private String randomEmail() {
-        String local = "user" + UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        String domain = DOMAINS.get(RANDOM.nextInt(DOMAINS.size()));
-        return local + "@" + domain;
-    }
+
 
     private String randomCode() {
         return "WLT-" + UUID.randomUUID().toString().replace("-", "").substring(0, 7).toUpperCase();

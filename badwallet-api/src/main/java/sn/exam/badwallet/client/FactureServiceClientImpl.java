@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Component
+@SuppressWarnings("null")
 public class FactureServiceClientImpl implements FactureServiceClient {
 
     private final RestTemplate restTemplate;

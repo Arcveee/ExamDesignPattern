@@ -12,7 +12,7 @@ import sn.exam.badwallet.exception.InvalidTransactionException;
 import sn.exam.badwallet.exception.WalletNotFoundException;
 import sn.exam.badwallet.repository.WalletRepository;
 
-import java.math.BigDecimal;
+
 import java.util.List;
 
 @Service
@@ -33,12 +33,12 @@ public class PaymentFacadeService {
     @Transactional
     public List<TransactionResponse> payCurrentBills(PayCurrentBillRequest request) {
         Wallet wallet = resolveWallet(request.phoneNumber());
-        List<BillInfo> bills = factureServiceClient.getCurrentFactures(request.serviceName());
-        if (bills.isEmpty()) {
+        List<BillInfo> unpaidBills = factureServiceClient.getCurrentFactures(request.serviceName())
+                .stream().filter(bill -> !bill.paid()).toList();
+        if (unpaidBills.isEmpty()) {
             throw new InvalidTransactionException("No unpaid bills found for service: " + request.serviceName());
         }
-        return bills.stream()
-                .filter(bill -> !bill.paid())
+        return unpaidBills.stream()
                 .map(bill -> billPaymentService.payBill(wallet, bill.amount(), bill.reference()))
                 .toList();
     }
@@ -46,19 +46,24 @@ public class PaymentFacadeService {
     @Transactional
     public List<TransactionResponse> payBillsByReferences(PayBillsByReferencesRequest request) {
         Wallet wallet = resolveWallet(request.phoneNumber());
-        List<BillInfo> bills = factureServiceClient.getFacturesByReferences(
-                request.serviceName(), request.factureReferences());
-        if (bills.isEmpty()) {
-            throw new InvalidTransactionException("No bills found for provided references");
+        List<BillInfo> unpaidBills = factureServiceClient.getFacturesByReferences(
+                request.serviceName(), request.factureReferences())
+                .stream().filter(bill -> !bill.paid()).toList();
+        if (unpaidBills.isEmpty()) {
+            throw new InvalidTransactionException("No unpaid bills found for provided references");
         }
-        return bills.stream()
-                .filter(bill -> !bill.paid())
+        return unpaidBills.stream()
                 .map(bill -> billPaymentService.payBill(wallet, bill.amount(), bill.reference()))
                 .toList();
     }
 
     private Wallet resolveWallet(String phoneNumber) {
-        return walletRepository.findByPhoneNumber(phoneNumber)
+        if (phoneNumber == null) throw new WalletNotFoundException(null);
+        String normalized = phoneNumber.replaceAll("\\s+", "");
+        if (normalized.length() == 9 && !normalized.startsWith("+")) {
+            normalized = "+221" + normalized;
+        }
+        return walletRepository.findByPhoneNumber(normalized)
                 .orElseThrow(() -> new WalletNotFoundException(phoneNumber));
     }
 }
