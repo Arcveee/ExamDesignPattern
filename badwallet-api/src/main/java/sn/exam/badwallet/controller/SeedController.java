@@ -19,8 +19,8 @@ public class SeedController {
 
     @PostMapping("/seed")
     public ResponseEntity<String> seed(
-            @RequestParam(defaultValue = "10") int numWallets,
-            @RequestParam(defaultValue = "5") int eventsPerWallet) {
+            @RequestParam(name = "numWallets", defaultValue = "10") int numWallets,
+            @RequestParam(name = "eventsPerWallet", defaultValue = "5") int eventsPerWallet) {
         seedService.seedWalletsAndTransactions(numWallets, eventsPerWallet);
         return ResponseEntity.accepted()
                 .body("Seeding started: " + numWallets + " wallets × " + eventsPerWallet + " transactions");

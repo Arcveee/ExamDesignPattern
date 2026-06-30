@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@SuppressWarnings("null")
 public class SeedService {
 
     private final WalletRepository walletRepository;

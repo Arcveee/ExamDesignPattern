@@ -18,7 +18,7 @@ public class DepositController {
     }
 
     @PostMapping("/{id}/deposit")
-    public ResponseEntity<TransactionResponse> deposit(@PathVariable Long id,
+    public ResponseEntity<TransactionResponse> deposit(@PathVariable("id") Long id,
                                                         @Valid @RequestBody DepositRequest request) {
         return ResponseEntity.ok(depositService.deposit(id, request));
     }

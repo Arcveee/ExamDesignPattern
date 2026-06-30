@@ -34,27 +34,27 @@ public class WalletController {
 
     @GetMapping
     public ResponseEntity<Page<WalletResponse>> getAllWallets(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return ResponseEntity.ok(walletService.getAllWallets(pageable));
     }
 
     @GetMapping("/{phoneNumber}")
-    public ResponseEntity<WalletResponse> getWallet(@PathVariable String phoneNumber) {
+    public ResponseEntity<WalletResponse> getWallet(@PathVariable("phoneNumber") String phoneNumber) {
         return ResponseEntity.ok(walletService.getWalletByPhoneNumber(phoneNumber));
     }
 
     @GetMapping("/{phoneNumber}/balance")
-    public ResponseEntity<BalanceResponse> getBalance(@PathVariable String phoneNumber) {
+    public ResponseEntity<BalanceResponse> getBalance(@PathVariable("phoneNumber") String phoneNumber) {
         return ResponseEntity.ok(walletService.getBalance(phoneNumber));
     }
 
     @GetMapping("/{phoneNumber}/transactions")
     public ResponseEntity<Page<TransactionResponse>> getTransactionHistory(
-            @PathVariable String phoneNumber,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable("phoneNumber") String phoneNumber,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         return ResponseEntity.ok(transactionService.getHistory(phoneNumber, page, size));
     }
 }

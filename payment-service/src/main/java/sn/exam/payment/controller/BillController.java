@@ -3,6 +3,7 @@ package sn.exam.payment.controller;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import sn.exam.payment.service.BillService;
 import sn.exam.shared.dto.BillResponse;
 import sn.exam.shared.dto.BillsByReferencesRequest;
@@ -21,15 +22,15 @@ public class BillController {
     }
 
     @GetMapping("/{provider}/{reference}")
-    public ResponseEntity<BillResponse> getBill(@PathVariable String provider,
-                                                 @PathVariable String reference) {
+    public ResponseEntity<BillResponse> getBill(@PathVariable("provider") String provider,
+                                                 @PathVariable("reference") String reference) {
         return ResponseEntity.ok(billService.findBill(provider, reference));
     }
 
     @GetMapping("/{provider}/current")
     public ResponseEntity<List<BillResponse>> getCurrentBills(
-            @PathVariable String provider,
-            @RequestParam(required = false) String unite) {
+            @PathVariable("provider") String provider,
+            @RequestParam(name = "unite", required = false) String unite) {
         if (unite != null) {
             return ResponseEntity.ok(billService.findCurrentByProviderAndUnite(provider, unite));
         }
@@ -38,8 +39,8 @@ public class BillController {
 
     @GetMapping("/periode")
     public ResponseEntity<List<BillResponse>> getByPeriode(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate debut,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
+            @RequestParam("debut") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate debut,
+            @RequestParam("fin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
         return ResponseEntity.ok(billService.findByPeriode(debut, fin));
     }
 
