@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sn.exam.badwallet.dto.BalanceResponse;
 import sn.exam.badwallet.dto.CreateWalletRequest;
+import sn.exam.badwallet.dto.TransactionResponse;
 import sn.exam.badwallet.dto.WalletResponse;
+import sn.exam.badwallet.service.TransactionService;
 import sn.exam.badwallet.service.WalletService;
 
 @RestController
@@ -18,9 +20,11 @@ import sn.exam.badwallet.service.WalletService;
 public class WalletController {
 
     private final WalletService walletService;
+    private final TransactionService transactionService;
 
-    public WalletController(WalletService walletService) {
+    public WalletController(WalletService walletService, TransactionService transactionService) {
         this.walletService = walletService;
+        this.transactionService = transactionService;
     }
 
     @PostMapping
@@ -44,5 +48,13 @@ public class WalletController {
     @GetMapping("/{phoneNumber}/balance")
     public ResponseEntity<BalanceResponse> getBalance(@PathVariable String phoneNumber) {
         return ResponseEntity.ok(walletService.getBalance(phoneNumber));
+    }
+
+    @GetMapping("/{phoneNumber}/transactions")
+    public ResponseEntity<Page<TransactionResponse>> getTransactionHistory(
+            @PathVariable String phoneNumber,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(transactionService.getHistory(phoneNumber, page, size));
     }
 }
