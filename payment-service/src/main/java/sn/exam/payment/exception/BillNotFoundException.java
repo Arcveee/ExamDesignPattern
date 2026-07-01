@@ -1,4 +1,4 @@
-package sn.exam.payment.service;
+package sn.exam.payment.exception;
 
 public class BillNotFoundException extends RuntimeException {
     public BillNotFoundException(String provider, String reference) {

@@ -14,6 +14,7 @@ import sn.exam.badwallet.mapper.WalletMapper;
 import sn.exam.badwallet.repository.WalletRepository;
 
 @Service
+@SuppressWarnings("null")
 public class WalletService {
 
     private final WalletRepository walletRepository;

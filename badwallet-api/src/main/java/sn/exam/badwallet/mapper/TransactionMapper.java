@@ -8,6 +8,7 @@ import sn.exam.badwallet.entity.Wallet;
 import java.util.Optional;
 
 @Component
+@SuppressWarnings("null")
 public class TransactionMapper {
 
     public TransactionResponse toResponse(Transaction transaction) {

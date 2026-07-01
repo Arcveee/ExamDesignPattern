@@ -11,6 +11,7 @@ import sn.exam.badwallet.repository.WalletRepository;
 
 import java.math.BigDecimal;
 
+@SuppressWarnings("null")
 public abstract class AbstractTransactionProcessor {
 
     protected final WalletRepository walletRepository;

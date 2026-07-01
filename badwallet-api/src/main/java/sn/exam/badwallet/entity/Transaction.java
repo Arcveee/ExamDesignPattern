@@ -95,6 +95,11 @@ public class Transaction {
             return this;
         }
 
+        public Builder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
         public Transaction build() {
             return new Transaction(this);
         }

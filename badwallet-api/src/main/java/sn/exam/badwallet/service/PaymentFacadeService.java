@@ -12,7 +12,7 @@ import sn.exam.badwallet.exception.InvalidTransactionException;
 import sn.exam.badwallet.exception.WalletNotFoundException;
 import sn.exam.badwallet.repository.WalletRepository;
 
-import java.math.BigDecimal;
+
 import java.util.List;
 
 @Service
