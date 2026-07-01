@@ -1,5 +1,7 @@
 package sn.exam.badwallet.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sn.exam.badwallet.dto.CreateWalletRequest;
@@ -38,5 +40,10 @@ public class WalletService {
                 .build();
 
         return walletMapper.toResponse(walletRepository.save(wallet));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<WalletResponse> getAllWallets(Pageable pageable) {
+        return walletRepository.findAll(pageable).map(walletMapper::toResponse);
     }
 }
