@@ -36,9 +36,27 @@ public abstract class AbstractTransactionProcessor {
         return transactionMapper.toResponse(saved);
     }
 
+    public final TransactionResponse process(Wallet source, Wallet target, BigDecimal amount) {
+        validateTransfer(source, target, amount);
+        Transaction transaction = executeTransfer(source, target, amount);
+        walletRepository.save(source);
+        walletRepository.save(target);
+        Transaction saved = transactionRepository.save(transaction);
+        publishEvent(saved);
+        return transactionMapper.toResponse(saved);
+    }
+
     protected abstract void validate(Wallet wallet, BigDecimal amount);
 
     protected abstract Transaction execute(Wallet wallet, BigDecimal amount);
+
+    protected void validateTransfer(Wallet source, Wallet target, BigDecimal amount) {
+        throw new UnsupportedOperationException("validateTransfer not implemented");
+    }
+
+    protected Transaction executeTransfer(Wallet source, Wallet target, BigDecimal amount) {
+        throw new UnsupportedOperationException("executeTransfer not implemented");
+    }
 
     private Transaction persist(Transaction transaction, Wallet wallet) {
         walletRepository.save(wallet);
