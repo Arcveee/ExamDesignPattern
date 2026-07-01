@@ -27,15 +27,16 @@ public class WalletService {
 
     @Transactional
     public WalletResponse createWallet(CreateWalletRequest request) {
-        if (walletRepository.existsByPhoneNumber(request.phoneNumber())) {
-            throw new WalletAlreadyExistsException("phoneNumber", request.phoneNumber());
+        String phone = normalizePhone(request.phoneNumber());
+        if (walletRepository.existsByPhoneNumber(phone)) {
+            throw new WalletAlreadyExistsException("phoneNumber", phone);
         }
         if (walletRepository.existsByCode(request.code())) {
             throw new WalletAlreadyExistsException("code", request.code());
         }
 
         Wallet wallet = Wallet.builder()
-                .phoneNumber(request.phoneNumber())
+                .phoneNumber(phone)
                 .email(request.email())
                 .code(request.code())
                 .balance(request.initialBalance())
@@ -52,17 +53,27 @@ public class WalletService {
 
     @Transactional(readOnly = true)
     public WalletResponse getWalletByPhoneNumber(String phoneNumber) {
-        return walletMapper.toResponse(findOrThrow(phoneNumber));
+        return walletMapper.toResponse(findOrThrow(normalizePhone(phoneNumber)));
     }
 
     @Transactional(readOnly = true)
     public BalanceResponse getBalance(String phoneNumber) {
-        Wallet wallet = findOrThrow(phoneNumber);
+        Wallet wallet = findOrThrow(normalizePhone(phoneNumber));
         return new BalanceResponse(wallet.getBalance(), wallet.getCurrency());
     }
 
     private Wallet findOrThrow(String phoneNumber) {
         return walletRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new WalletNotFoundException(phoneNumber));
+    }
+
+    /**
+     * Normalise le numéro de téléphone : supprime les espaces.
+     * Ex: "77 123 43 32" -> "771234332"
+     *     "+221770000001" -> "+221770000001" (inchangé)
+     */
+    private String normalizePhone(String phoneNumber) {
+        if (phoneNumber == null) return null;
+        return phoneNumber.replaceAll("\\s+", "");
     }
 }

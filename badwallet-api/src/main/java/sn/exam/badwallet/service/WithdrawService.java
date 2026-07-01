@@ -35,8 +35,9 @@ public class WithdrawService extends AbstractTransactionProcessor {
 
     @Transactional
     public TransactionResponse withdraw(WithdrawRequest request) {
-        Wallet wallet = walletRepository.findByPhoneNumber(request.phoneNumber())
-                .orElseThrow(() -> new WalletNotFoundException(request.phoneNumber()));
+        String normalized = request.phoneNumber() == null ? null : request.phoneNumber().replaceAll("\\s+", "");
+        Wallet wallet = walletRepository.findByPhoneNumber(normalized)
+                .orElseThrow(() -> new WalletNotFoundException(normalized));
         return process(wallet, request.amount());
     }
 

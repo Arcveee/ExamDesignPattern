@@ -30,8 +30,9 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     public Page<TransactionResponse> getHistory(String phoneNumber, int page, int size) {
-        Wallet wallet = walletRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new WalletNotFoundException(phoneNumber));
+        String normalized = phoneNumber == null ? null : phoneNumber.replaceAll("\\s+", "");
+        Wallet wallet = walletRepository.findByPhoneNumber(normalized)
+                .orElseThrow(() -> new WalletNotFoundException(normalized));
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return transactionRepository
                 .findBySourceWalletIdOrTargetWalletId(wallet.getId(), wallet.getId(), pageable)
