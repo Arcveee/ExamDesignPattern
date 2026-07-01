@@ -1,0 +1,42 @@
+package sn.exam.badwallet.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sn.exam.badwallet.dto.CreateWalletRequest;
+import sn.exam.badwallet.dto.WalletResponse;
+import sn.exam.badwallet.entity.Wallet;
+import sn.exam.badwallet.exception.WalletAlreadyExistsException;
+import sn.exam.badwallet.mapper.WalletMapper;
+import sn.exam.badwallet.repository.WalletRepository;
+
+@Service
+public class WalletService {
+
+    private final WalletRepository walletRepository;
+    private final WalletMapper walletMapper;
+
+    public WalletService(WalletRepository walletRepository, WalletMapper walletMapper) {
+        this.walletRepository = walletRepository;
+        this.walletMapper = walletMapper;
+    }
+
+    @Transactional
+    public WalletResponse createWallet(CreateWalletRequest request) {
+        if (walletRepository.existsByPhoneNumber(request.phoneNumber())) {
+            throw new WalletAlreadyExistsException("phoneNumber", request.phoneNumber());
+        }
+        if (walletRepository.existsByCode(request.code())) {
+            throw new WalletAlreadyExistsException("code", request.code());
+        }
+
+        Wallet wallet = Wallet.builder()
+                .phoneNumber(request.phoneNumber())
+                .email(request.email())
+                .code(request.code())
+                .balance(request.initialBalance())
+                .currency(request.currency())
+                .build();
+
+        return walletMapper.toResponse(walletRepository.save(wallet));
+    }
+}

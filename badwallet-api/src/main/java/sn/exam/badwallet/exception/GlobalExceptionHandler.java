@@ -17,6 +17,11 @@ public class GlobalExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(WalletAlreadyExistsException.class)
+    public ProblemDetail handleWalletAlreadyExists(WalletAlreadyExistsException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
     @ExceptionHandler(InsufficientBalanceException.class)
     public ProblemDetail handleInsufficientBalance(InsufficientBalanceException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
