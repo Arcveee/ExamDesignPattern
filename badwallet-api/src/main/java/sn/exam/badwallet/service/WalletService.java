@@ -37,7 +37,7 @@ public class WalletService {
 
         Wallet wallet = Wallet.builder()
                 .phoneNumber(phone)
-                .email(request.email())
+                .ownerName(request.ownerName())
                 .code(request.code())
                 .balance(request.initialBalance())
                 .currency(request.currency())
@@ -68,12 +68,14 @@ public class WalletService {
     }
 
     /**
-     * Normalise le numéro de téléphone : supprime les espaces.
-     * Ex: "77 123 43 32" -> "771234332"
-     *     "+221770000001" -> "+221770000001" (inchangé)
+     * Normalise le numéro de téléphone : supprime les espaces et ajoute +221 si nécessaire.
      */
     private String normalizePhone(String phoneNumber) {
         if (phoneNumber == null) return null;
-        return phoneNumber.replaceAll("\\s+", "");
+        String clean = phoneNumber.replaceAll("\\s+", "");
+        if (clean.length() == 9 && !clean.startsWith("+")) {
+            return "+221" + clean;
+        }
+        return clean;
     }
 }

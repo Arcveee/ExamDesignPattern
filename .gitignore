@@ -46,3 +46,8 @@ Thumbs.db
 
 # Spring Boot
 spring-shell.log
+
+# H2 Database files
+data/
+**/data/*.mv.db
+**/data/*.trace.db

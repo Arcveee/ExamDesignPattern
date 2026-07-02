@@ -31,11 +31,23 @@ public class TransferService extends AbstractTransactionProcessor {
 
     @Transactional
     public TransactionResponse transfer(TransferRequest request) {
-        Wallet sender = walletRepository.findByPhoneNumber(request.senderPhone())
-                .orElseThrow(() -> new WalletNotFoundException(request.senderPhone()));
-        Wallet receiver = walletRepository.findByPhoneNumber(request.receiverPhone())
-                .orElseThrow(() -> new WalletNotFoundException(request.receiverPhone()));
+        String senderPhone = normalizePhone(request.senderPhone());
+        String receiverPhone = normalizePhone(request.receiverPhone());
+
+        Wallet sender = walletRepository.findByPhoneNumber(senderPhone)
+                .orElseThrow(() -> new WalletNotFoundException(senderPhone));
+        Wallet receiver = walletRepository.findByPhoneNumber(receiverPhone)
+                .orElseThrow(() -> new WalletNotFoundException(receiverPhone));
         return process(sender, receiver, request.amount());
+    }
+
+    private String normalizePhone(String phoneNumber) {
+        if (phoneNumber == null) return null;
+        String clean = phoneNumber.replaceAll("\\s+", "");
+        if (clean.length() == 9 && !clean.startsWith("+")) {
+            return "+221" + clean;
+        }
+        return clean;
     }
 
     @Override

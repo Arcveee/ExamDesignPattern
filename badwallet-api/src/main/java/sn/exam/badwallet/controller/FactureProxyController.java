@@ -21,8 +21,8 @@ public class FactureProxyController {
 
     @GetMapping("/{code}/current")
     public ResponseEntity<List<BillInfo>> getCurrent(
-            @PathVariable String code,
-            @RequestParam(required = false) String unite) {
+            @PathVariable("code") String code,
+            @RequestParam(name = "unite", required = false) String unite) {
         if (unite != null) {
             return ResponseEntity.ok(factureServiceClient.getCurrentFacturesByUnite(code, unite));
         }
@@ -31,9 +31,9 @@ public class FactureProxyController {
 
     @GetMapping("/{code}/periode")
     public ResponseEntity<List<BillInfo>> getByPeriode(
-            @PathVariable String code,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate debut,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
+            @PathVariable("code") String code,
+            @RequestParam("debut") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate debut,
+            @RequestParam("fin") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fin) {
         return ResponseEntity.ok(factureServiceClient.getFacturesByPeriode(debut, fin));
     }
 }

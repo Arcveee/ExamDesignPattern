@@ -58,8 +58,12 @@ public class PaymentFacadeService {
     }
 
     private Wallet resolveWallet(String phoneNumber) {
-        String normalized = phoneNumber == null ? null : phoneNumber.replaceAll("\\s+", "");
+        if (phoneNumber == null) throw new WalletNotFoundException(null);
+        String normalized = phoneNumber.replaceAll("\\s+", "");
+        if (normalized.length() == 9 && !normalized.startsWith("+")) {
+            normalized = "+221" + normalized;
+        }
         return walletRepository.findByPhoneNumber(normalized)
-                .orElseThrow(() -> new WalletNotFoundException(normalized));
+                .orElseThrow(() -> new WalletNotFoundException(phoneNumber));
     }
 }

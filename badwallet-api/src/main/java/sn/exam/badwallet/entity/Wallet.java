@@ -15,8 +15,8 @@ public class Wallet {
     @Column(nullable = false, unique = true)
     private String phoneNumber;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(nullable = false)
+    private String ownerName;
 
     @Column(nullable = false, unique = true, length = 20)
     private String code;
@@ -34,7 +34,7 @@ public class Wallet {
 
     private Wallet(Builder builder) {
         this.phoneNumber = builder.phoneNumber;
-        this.email = builder.email;
+        this.ownerName = builder.ownerName;
         this.code = builder.code;
         this.balance = builder.balance;
         this.currency = builder.currency;
@@ -47,7 +47,7 @@ public class Wallet {
 
     public static final class Builder {
         private String phoneNumber;
-        private String email;
+        private String ownerName;
         private String code;
         private BigDecimal balance = BigDecimal.ZERO;
         private String currency = "XOF";
@@ -58,8 +58,8 @@ public class Wallet {
             return this;
         }
 
-        public Builder email(String email) {
-            this.email = email;
+        public Builder ownerName(String ownerName) {
+            this.ownerName = ownerName;
             return this;
         }
 
@@ -85,7 +85,7 @@ public class Wallet {
 
     public Long getId() { return id; }
     public String getPhoneNumber() { return phoneNumber; }
-    public String getEmail() { return email; }
+    public String getOwnerName() { return ownerName; }
     public String getCode() { return code; }
     public BigDecimal getBalance() { return balance; }
     public String getCurrency() { return currency; }

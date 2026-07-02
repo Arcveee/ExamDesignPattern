@@ -35,10 +35,19 @@ public class WithdrawService extends AbstractTransactionProcessor {
 
     @Transactional
     public TransactionResponse withdraw(WithdrawRequest request) {
-        String normalized = request.phoneNumber() == null ? null : request.phoneNumber().replaceAll("\\s+", "");
+        String normalized = normalizePhone(request.phoneNumber());
         Wallet wallet = walletRepository.findByPhoneNumber(normalized)
                 .orElseThrow(() -> new WalletNotFoundException(normalized));
         return process(wallet, request.amount());
+    }
+
+    private String normalizePhone(String phoneNumber) {
+        if (phoneNumber == null) return null;
+        String clean = phoneNumber.replaceAll("\\s+", "");
+        if (clean.length() == 9 && !clean.startsWith("+")) {
+            return "+221" + clean;
+        }
+        return clean;
     }
 
     @Override
